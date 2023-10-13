@@ -1,5 +1,5 @@
 
-
+'use client'
 export const addToFavorites = (crypto_id) => {
     const favorites = getFavorites();
     if (!favorites.includes(crypto_id)) {

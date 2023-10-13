@@ -1,4 +1,5 @@
 /** @format */
+'use client'
 import { useState } from 'react'
 import { Button, TextField, Box } from '@mui/material'
 

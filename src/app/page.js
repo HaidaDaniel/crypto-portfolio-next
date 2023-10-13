@@ -1,53 +1,63 @@
-'use client'
-import { CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar } from '@mui/material';
-import { useState, useEffect } from 'react';
-import { fetchCryptoData } from '@/api';
+import { CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Toolbar } from '@mui/material';
+import axios from 'axios';
+
 import styles from './page.module.css';
-import { columns, cellStyles } from '../components/gridProperties/mainGrid';
-import { getFavorites, addToFavorites, removeFromFavorites } from '@/components/helpers/favorite';
+import { columns } from '../components/gridProperties/mainGrid';
+import MainTableBody from '@/components/MainTaBleBody';
 
-export default function Home() {
-  const [cryptoData, setCryptoData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const arrayFavs = getFavorites();
+export async function getData() {
+  try {
+    const apiKey = 'dc3c754a-8e83-4879-82dc-2aaa1ce6d802';
+    const apiUrl = 'https://api.coincap.io/v2/assets?limit=200';
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const data = await fetchCryptoData();
-        setCryptoData(data);
-        setLoading(false);
-      } catch (error) {
-        setError(error);
-        setLoading(false);
+    const response = await axios.get(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
+    });
+
+    const rawData = response.data.data;
+
+    const isNumber = (value) => !isNaN(parseFloat(value)) && isFinite(value)
+    const roundToNDecimalPlaces = (value, n) => {
+      if (isNumber(value)) {
+        return parseFloat(value).toFixed(n);
       }
-    }
-    fetchData();
-  }, []);
+      return value;
+    };
 
-  const toggleFavorite = async (crypto_id) => {
-    try {
-      if (arrayFavs?.includes(crypto_id)) {
-        removeFromFavorites(crypto_id);
-        console.log(`Removed to favorites: ${crypto_id}`);
-      } else {
-        addToFavorites(crypto_id);
-        console.log(`Added to favorites: ${crypto_id}`);
-      }
-    } catch (error) {
-      console.error('Error adding to favorites:', error);
-    }
-  }
+    const filteredAndRoundedData = rawData.map((crypto) => {
+      return {
+        ...crypto,
+        supply: roundToNDecimalPlaces(crypto.supply, 4),
+        maxSupply: roundToNDecimalPlaces(crypto.maxSupply, 4),
+        marketCapUsd: roundToNDecimalPlaces(crypto.marketCapUsd, 4),
+        volumeUsd24Hr: roundToNDecimalPlaces(crypto.volumeUsd24Hr, 4),
+        priceUsd: roundToNDecimalPlaces(crypto.priceUsd, 4),
+        vwap24Hr: roundToNDecimalPlaces(crypto.vwap24Hr, 4),
+      };
+    });
 
-  if (loading) {
-    return <CircularProgress />;
+    return {
+      props: {
+        cryptoData: filteredAndRoundedData,
+      },
+    };
+  } catch (error) {
+    console.error('Error in downloading data', error);
+    return {
+      props: {
+        cryptoData: [],
+        error: 'Error in downloading data',
+      },
+    };
   }
+}
 
-  if (error) {
-    return <div>Error in download data: {error.message}</div>;
-  }
-  const rows = cryptoData
+export default async function Home() {
+  const data = await getData()
+  const rows = data.props.cryptoData
+
   return (
     <main className={styles.main}>
       <Paper>
@@ -63,20 +73,7 @@ export default function Home() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
-                <TableRow
-                  key={row.name}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
-                  <TableCell align="right">{row.calories}</TableCell>
-                  <TableCell align="right">{row.fat}</TableCell>
-                  <TableCell align="right">{row.carbs}</TableCell>
-                  <TableCell align="right">{row.protein}</TableCell>
-                </TableRow>
-              ))}
+              <MainTableBody rows={rows} />
             </TableBody>
           </Table>
         </TableContainer>

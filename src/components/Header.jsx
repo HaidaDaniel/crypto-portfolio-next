@@ -28,7 +28,7 @@ function Header() {
   }
 
   return (
-    <footer>
+    <>
       <AppBar position='static'>
         <Container maxWidth='xl'>
           <Toolbar disableGutters>
@@ -117,7 +117,7 @@ function Header() {
           </Toolbar>
         </Container>
       </AppBar>
-    </footer>
+    </>
   )
 }
 export default Header
