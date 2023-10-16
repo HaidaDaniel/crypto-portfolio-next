@@ -23,7 +23,6 @@ const CryptoDetails = () => {
                         Authorization: `Bearer ${apiKey}`,
                     },
                 });
-
                 const rawData = response.data.data;
                 console.log(rawData)
                 const isNumber = (value) => !isNaN(parseFloat(value)) && isFinite(value);
@@ -33,7 +32,6 @@ const CryptoDetails = () => {
                     }
                     return value;
                 };
-
                 const filteredAndRoundedData = {
                     ...rawData,
                     supply: roundToNDecimalPlaces(rawData.supply, 4),
@@ -43,7 +41,6 @@ const CryptoDetails = () => {
                     priceUsd: roundToNDecimalPlaces(rawData.priceUsd, 4),
                     vwap24Hr: roundToNDecimalPlaces(rawData.vwap24Hr, 4),
                 };
-
                 setCrypto(filteredAndRoundedData);
             } catch (error) {
                 console.error('Error in downloading data', error);
@@ -51,7 +48,6 @@ const CryptoDetails = () => {
                 setLoading(false);
             }
         };
-
         fetchData();
     }, []);
 
@@ -118,4 +114,4 @@ const CryptoDetails = () => {
     );
 };
 
-export default CryptoDetails;
+export default CryptoDetails
