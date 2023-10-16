@@ -55,8 +55,10 @@ export async function getData() {
 }
 
 export default async function Home() {
+  // const { data, isLoading, error } = useGetCryptosQuery(limit = 200)
   const data = await getData()
   const rows = data.props.cryptoData
+  // const rows = data.data
 
   return (
     <main className={styles.main}>
@@ -79,6 +81,7 @@ export default async function Home() {
         </TableContainer>
         <Toolbar />
       </Paper>
+
     </main>
   );
 }

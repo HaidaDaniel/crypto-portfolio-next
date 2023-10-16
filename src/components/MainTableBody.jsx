@@ -5,14 +5,9 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { TableCell, TableRow } from '@mui/material'
 import FavButton from './FavButtons'
-import {
-  addToFavorites,
-  getFavorites,
-  removeFromFavorites,
-} from './helpers/favorite'
 
 const MainTableBody = ({ rows }) => {
-  const [favorites, setFavorites] = useState(['1'])
+  const [favorites, setFavorites] = useState(['bitcoin'])
 
   const toggleFavorite = async (crypto_id) => {
     try {
@@ -50,8 +45,8 @@ const MainTableBody = ({ rows }) => {
             {favorites && (
               <FavButton
                 toggleFavorite={toggleFavorite}
-                isInFav={favorites.includes(row.rank)}
-                id={row.rank}
+                isInFav={favorites.includes(row.id)}
+                id={row.id}
               />
             )}
           </TableCell>
