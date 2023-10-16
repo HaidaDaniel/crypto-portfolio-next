@@ -4,11 +4,13 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { TableCell, TableRow } from '@mui/material'
+import { useRouter } from 'next/navigation'
+
 import FavButton from './FavButtons'
 
 const MainTableBody = ({ rows }) => {
   const [favorites, setFavorites] = useState(['bitcoin'])
-
+  const router = useRouter()
   const toggleFavorite = async (crypto_id) => {
     try {
       console.log(crypto_id)
@@ -36,7 +38,7 @@ const MainTableBody = ({ rows }) => {
           sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
           <TableCell align='right'>{row.rank}</TableCell>
           <TableCell component='th' scope='row'>
-            {row.name}
+            <Link href={`/crypto/${row.id}`}>{row.name}</Link>
           </TableCell>
           <TableCell align='right'>{row.priceUsd}</TableCell>
           <TableCell align='right'>{row.volumeUsd24Hr}</TableCell>
